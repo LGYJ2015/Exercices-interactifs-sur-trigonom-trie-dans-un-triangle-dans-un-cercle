@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Application sur la trigonométrie dans un cercle – Mme Ghayati L.</title>
+<style>
+  :root {
+    --navy: #0b2a5b;
+    --royal: #1d5fd1;
+    --sky: #5bb5f5;
+    --ice: #eaf4ff;
+    --sun: #ffc93c;
+    --white: #ffffff;
+    --text: #12294d;
+    --muted: #4a6288;
+    --line: #cfe2fa;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 16px;
+    line-height: 1.5;
+    color: var(--text);
+    background: var(--ice);
+  }
+
+  /* En-tête */
+  header {
+    background: linear-gradient(135deg, var(--navy) 0%, var(--royal) 100%);
+    color: var(--white);
+    padding: 32px 20px 56px;
+  }
+  .header-inner {
+    max-width: 1000px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+  }
+  header h1 {
+    margin: 0 0 6px;
+    font-size: clamp(26px, 4.5vw, 38px);
+    line-height: 1.1;
+  }
+  header p { margin: 0; font-size: 18px; opacity: .92; }
+  .teacher {
+    display: inline-block;
+    margin-top: 14px;
+    padding: 6px 14px;
+    background: var(--sun);
+    color: var(--navy);
+    font-weight: bold;
+    border-radius: 999px;
+    font-size: 15px;
+  }
+  .circle-art { flex: 0 0 auto; width: 150px; height: 150px; }
+
+  /* Onglets de classes */
+  main { max-width: 1000px; margin: -30px auto 40px; padding: 0 20px; }
+  .tabs {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 24px;
+  }
+  .tab {
+    flex: 1 1 140px;
+    font: inherit;
+    font-size: 20px;
+    font-weight: bold;
+    padding: 14px 18px;
+    border: 3px solid var(--white);
+    border-radius: 18px;
+    background: var(--white);
+    color: var(--royal);
+    cursor: pointer;
+    box-shadow: 0 4px 0 var(--line);
+  }
+  .tab[aria-selected="true"] {
+    background: var(--sun);
+    color: var(--navy);
+    border-color: var(--sun);
+    box-shadow: 0 4px 0 #d9a514;
+  }
+  .tab:hover { border-color: var(--sky); }
+  .tab[aria-selected="true"]:hover { border-color: var(--sun); }
+
+  /* Chapitres */
+  .chapter {
+    background: var(--white);
+    border-radius: 24px;
+    padding: 26px;
+    margin-bottom: 24px;
+    border: 2px solid var(--line);
+  }
+  .chapter h2 {
+    margin: 0 0 18px;
+    font-size: 24px;
+    color: var(--navy);
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+    gap: 16px;
+  }
+  .card {
+    font: inherit;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    min-height: 150px;
+    padding: 18px;
+    border: 3px solid transparent;
+    border-radius: 20px;
+    color: var(--white);
+    cursor: pointer;
+    background: var(--royal);
+  }
+  .card:nth-child(4n+1) { background: #1d5fd1; }
+  .card:nth-child(4n+2) { background: #2e86e6; }
+  .card:nth-child(4n+3) { background: #0f9ad6; }
+  .card:nth-child(4n+4) { background: #1747a0; }
+  .card .emoji { font-size: 38px; line-height: 1; }
+  .card .name { font-size: 17px; font-weight: bold; line-height: 1.3; }
+  .card:hover { border-color: var(--sun); }
+  .card[aria-expanded="true"] {
+    border-color: var(--sun);
+    outline: 3px solid var(--navy);
+  }
+  .card:focus-visible, .tab:focus-visible, .btn:focus-visible {
+    outline: 4px solid var(--sun);
+    outline-offset: 2px;
+  }
+
+  /* Zone d'activité */
+  .viewer {
+    margin-top: 22px;
+    border: 3px solid var(--royal);
+    border-radius: 20px;
+    overflow: hidden;
+    background: var(--white);
+  }
+  .viewer[hidden] { display: none; }
+  .viewer-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 12px 16px;
+    background: var(--royal);
+    color: var(--white);
+  }
+  .viewer-title { font-weight: bold; font-size: 17px; }
+  .viewer-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+  .btn {
+    font: inherit;
+    font-size: 14px;
+    font-weight: bold;
+    padding: 8px 14px;
+    border-radius: 999px;
+    border: 0;
+    cursor: pointer;
+    text-decoration: none;
+    background: var(--white);
+    color: var(--navy);
+  }
+  .btn.close { background: var(--sun); }
+  .btn:hover { filter: brightness(.94); }
+  .viewer iframe {
+    display: block;
+    width: 100%;
+    height: 500px;
+    border: 0;
+  }
+
+  /* Classes sans activité */
+  .soon {
+    text-align: center;
+    padding: 40px 20px;
+    border: 3px dashed var(--sky);
+    border-radius: 24px;
+    background: var(--white);
+    color: var(--muted);
+    font-size: 18px;
+  }
+  .soon .emoji { display: block; font-size: 46px; margin-bottom: 8px; }
+
+  footer {
+    text-align: center;
+    color: var(--muted);
+    font-size: 14px;
+    padding: 0 20px 30px;
+  }
+
+  @media (max-width: 600px) {
+    .circle-art { display: none; }
+    .chapter { padding: 18px; }
+    .viewer iframe { height: 460px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div>
+      <h1>📐 Application sur la trigonométrie dans un cercle</h1>
+      <p>Clique sur une activité pour t’entraîner.</p>
+      <span class="teacher">Mme Ghayati L.</span>
+    </div>
+    <svg class="circle-art" viewBox="0 0 150 150" role="img" aria-label="Cercle trigonométrique">
+      <circle cx="75" cy="75" r="62" fill="none" stroke="#ffffff" stroke-width="3"/>
+      <line x1="5" y1="75" x2="145" y2="75" stroke="#9fd3fb" stroke-width="2"/>
+      <line x1="75" y1="5" x2="75" y2="145" stroke="#9fd3fb" stroke-width="2"/>
+      <line x1="75" y1="75" x2="129" y2="44" stroke="#ffc93c" stroke-width="4" stroke-linecap="round"/>
+      <line x1="129" y1="44" x2="129" y2="75" stroke="#ffffff" stroke-width="3" stroke-dasharray="5 4"/>
+      <path d="M 105 75 A 30 30 0 0 0 101 60" fill="none" stroke="#ffc93c" stroke-width="3"/>
+      <circle cx="129" cy="44" r="6" fill="#ffc93c"/>
+    </svg>
+  </div>
+</header>
+
+<main>
+  <div class="tabs" role="tablist" aria-label="Classes" id="tabs"></div>
+  <div id="panels"></div>
+</main>
+
+<footer>Plateforme de Mme Ghayati L.</footer>
+
+<script>
+/* ------------------------------------------------------------------
+   CONTENU : pour ajouter une activité, copier un bloc { title, emoji, url }
+   dans la liste « cards » du bon chapitre. Pour ajouter un chapitre,
+   copier un bloc { title, emoji, cards: [...] } dans « chapters ».
+------------------------------------------------------------------- */
+const DATA = [
+  {
+    id: "4G", label: "4G", emoji: "🔵",
+    chapters: [
+      {
+        title: "", emoji: "",
+        cards: [
+          { title: "Angles en degrés sur cercle trigonométrique", emoji: "📐",
+            url: "https://learningapps.org/watch?app=2262681" },
+          { title: "Sinus et cosinus dans le cercle trigonométrique", emoji: "🌀",
+            url: "https://learningapps.org/watch?app=7671243" },
+          { title: "Cosinus d’angles particuliers (donnés en degrés)", emoji: "🧮",
+            url: "https://learningapps.org/watch?app=7676383" },
+          { title: "Sinus d’angles particuliers (donnés en degrés)", emoji: "✨",
+            url: "https://learningapps.org/watch?app=7676318" },
+          { title: "Tangente d’angles particuliers (donnés en degrés)", emoji: "📏",
+            url: "https://learningapps.org/watch?app=7676592" },
+          { title: "Nombres trigonométriques particuliers du 1er quadrant", emoji: "🏆",
+            url: "https://learningapps.org/watch?v=pffzfxv8a26" }
+        ]
+      }
+    ]
+  }
+];
+
+const tabsEl = document.getElementById("tabs");
+const panelsEl = document.getElementById("panels");
+let openCard = null;
+
+function el(tag, attrs, children) {
+  const node = document.createElement(tag);
+  Object.entries(attrs || {}).forEach(([k, v]) => {
+    if (k === "text") node.textContent = v;
+    else node.setAttribute(k, v);
+  });
+  (children || []).forEach(c => node.appendChild(c));
+  return node;
+}
+
+function closeViewer(viewer, card) {
+  viewer.hidden = true;
+  const frame = viewer.querySelector("iframe");
+  if (frame) frame.remove();
+  if (card) card.setAttribute("aria-expanded", "false");
+  if (openCard === card) openCard = null;
+}
+
+function buildChapter(chapter) {
+  const section = el("section", { class: "chapter" });
+  if (chapter.title) section.appendChild(el("h2", { text: chapter.emoji + " " + chapter.title }));
+
+  const grid = el("div", { class: "grid" });
+  const viewer = el("div", { class: "viewer", hidden: "" });
+  const title = el("span", { class: "viewer-title" });
+  const newTab = el("a", { class: "btn", target: "_blank", rel: "noopener", text: "Ouvrir dans un nouvel onglet" });
+  const closeBtn = el("button", { class: "btn close", type: "button", text: "Fermer" });
+  const bar = el("div", { class: "viewer-bar" }, [
+    title,
+    el("div", { class: "viewer-actions" }, [newTab, closeBtn])
+  ]);
+  viewer.appendChild(bar);
+
+  let current = null;
+  closeBtn.addEventListener("click", () => {
+    const back = current;
+    closeViewer(viewer, current);
+    if (back) back.focus();
+  });
+
+  chapter.cards.forEach(c => {
+    const card = el("button", { class: "card", type: "button", "aria-expanded": "false" }, [
+      el("span", { class: "emoji", text: c.emoji, "aria-hidden": "true" }),
+      el("span", { class: "name", text: c.title })
+    ]);
+    card.addEventListener("click", () => {
+      if (current === card && !viewer.hidden) {
+        closeViewer(viewer, card);
+        return;
+      }
+      // ferme l’activité ouverte ailleurs
+      if (openCard && openCard !== card && openCard._viewer) {
+        closeViewer(openCard._viewer, openCard);
+      }
+      if (current && current !== card) current.setAttribute("aria-expanded", "false");
+      const old = viewer.querySelector("iframe");
+      if (old) old.remove();
+
+      const frame = el("iframe", {
+        src: c.url,
+        title: c.title,
+        allowfullscreen: "true",
+        loading: "lazy"
+      });
+      viewer.appendChild(frame);
+      title.textContent = c.emoji + " " + c.title;
+      newTab.href = c.url;
+      viewer.hidden = false;
+      card.setAttribute("aria-expanded", "true");
+      current = card;
+      card._viewer = viewer;
+      openCard = card;
+      viewer.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+    grid.appendChild(card);
+  });
+
+  section.appendChild(grid);
+  section.appendChild(viewer);
+  return section;
+}
+
+function buildPanel(cls) {
+  const panel = el("div", { role: "tabpanel", id: "panel-" + cls.id, hidden: "" });
+  if (cls.chapters.length === 0) {
+    panel.appendChild(el("div", { class: "soon" }, [
+      el("span", { class: "emoji", text: "🚧", "aria-hidden": "true" }),
+      el("span", { text: "Les activités de " + cls.label + " arrivent bientôt." })
+    ]));
+  } else {
+    cls.chapters.forEach(ch => panel.appendChild(buildChapter(ch)));
+  }
+  return panel;
+}
+
+function select(id) {
+  DATA.forEach(cls => {
+    const tab = document.getElementById("tab-" + cls.id);
+    const panel = document.getElementById("panel-" + cls.id);
+    const on = cls.id === id;
+    tab.setAttribute("aria-selected", on ? "true" : "false");
+    tab.tabIndex = on ? 0 : -1;
+    panel.hidden = !on;
+  });
+}
+
+DATA.forEach(cls => {
+  const tab = el("button", {
+    class: "tab", type: "button", role: "tab", id: "tab-" + cls.id,
+    "aria-controls": "panel-" + cls.id, "aria-selected": "false",
+    text: cls.emoji + " " + cls.label
+  });
+  tab.addEventListener("click", () => select(cls.id));
+  tab.addEventListener("keydown", e => {
+    const i = DATA.findIndex(c => c.id === cls.id);
+    if (e.key === "ArrowRight" || e.key === "ArrowLeft") {
+      const next = DATA[(i + (e.key === "ArrowRight" ? 1 : DATA.length - 1)) % DATA.length];
+      select(next.id);
+      document.getElementById("tab-" + next.id).focus();
+    }
+  });
+  tabsEl.appendChild(tab);
+  panelsEl.appendChild(buildPanel(cls));
+});
+
+select(DATA[0].id);
+</script>
+</body>
+</html>
